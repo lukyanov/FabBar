@@ -51,6 +51,9 @@ struct FabBarRepresentable<Value: Hashable>: UIViewRepresentable {
 
     func updateUIView(_ uiView: GlassTabBarView, context: Context) {
         context.coordinator.parent = self
+        // SwiftUI rebuilds `action` on every state change and its closures capture that state, so
+        // handing the newest one over is what keeps the FAB acting on current values.
+        uiView.update(action: action)
 
         let control = uiView.segmentedControl
         control.selectedSegmentTintColor = segmentTintColor(for: uiView.traitCollection)

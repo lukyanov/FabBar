@@ -16,6 +16,11 @@ final class GlassTabBarView: UIView {
     private(set) var tabCount: Int
     private var segmentedTrailingConstraint: NSLayoutConstraint?
 
+    /// The newest configuration. Both the tap and the menu read it when they fire rather than
+    /// capturing it: a SwiftUI host rebuilds its `FabBarAction` on every state change, so a closure
+    /// captured once at init would keep calling into a stale copy of the view.
+    private var action: FabBarAction
+
     init(
         segmentedControl: TabBarSegmentedControl,
         tabCount: Int,
@@ -23,6 +28,7 @@ final class GlassTabBarView: UIView {
     ) {
         self.segmentedControl = segmentedControl
         self.tabCount = tabCount
+        self.action = action
 
         // Create glass container effect for morphing
         let containerEffect = UIGlassContainerEffect()
@@ -56,10 +62,29 @@ final class GlassTabBarView: UIView {
         fabGlassView.tintAdjustmentMode = .automatic
         fabButton.tintAdjustmentMode = .automatic
 
-        setupViews(action: action)
+        setupViews()
+        update(action: action)
     }
 
-    private func setupViews(action: FabBarAction) {
+    /// Adopts a newly built configuration. The tap and the menu both read `action` when they fire,
+    /// so this is all it takes to keep them current: the attached menu is a deferred element that
+    /// asks for the newest children each time it opens.
+    func update(action: FabBarAction) {
+        self.action = action
+        if action.menu == nil {
+            fabButton.menu = nil
+        } else if fabButton.menu == nil {
+            fabButton.menu = UIMenu(children: [
+                UIDeferredMenuElement.uncached { [weak self] completion in
+                    completion(self?.action.menu?.children ?? [])
+                }
+            ])
+            // The tap keeps its meaning; press-and-hold is what opens the menu.
+            fabButton.showsMenuAsPrimaryAction = false
+        }
+    }
+
+    private func setupViews() {
         // Add container effect view
         addSubview(containerEffectView)
         containerEffectView.translatesAutoresizingMaskIntoConstraints = false
@@ -79,8 +104,8 @@ final class GlassTabBarView: UIView {
         fabGlassView.contentView.addSubview(fabButton)
         fabButton.translatesAutoresizingMaskIntoConstraints = false
 
-        // Store action for button
-        fabButton.addAction(UIAction { _ in action.action() }, for: .touchUpInside)
+        // Goes through the stored action, so the tap cannot go stale — see `update`.
+        fabButton.addAction(UIAction { [weak self] _ in self?.action.action() }, for: .touchUpInside)
 
         // Extra bottom inset compensates for UISegmentedControl's internal padding,
         // visually centering the content within the glass container.

@@ -1,4 +1,4 @@
-import Foundation
+import UIKit
 
 /// Configuration for the floating action button (FAB) in FabBar.
 ///
@@ -12,6 +12,12 @@ public struct FabBarAction {
     /// The accessibility label for VoiceOver users.
     public let accessibilityLabel: String
 
+    /// Secondary actions, presented as a menu when the button is pressed and held, or `nil` (the
+    /// default) for a button that only taps. The menu never replaces the tap: `action` still runs
+    /// on a plain tap, the way a toolbar button carries a menu while keeping its primary action.
+    /// UIKit anchors the menu to the button and exposes its actions to assistive technology.
+    public let menu: UIMenu?
+
     /// The action to perform when the button is tapped.
     public let action: () -> Void
 
@@ -20,14 +26,17 @@ public struct FabBarAction {
     /// - Parameters:
     ///   - systemImage: The SF Symbol name for the button icon.
     ///   - accessibilityLabel: The accessibility label for VoiceOver users.
+    ///   - menu: Secondary actions presented on press-and-hold. Defaults to none.
     ///   - action: The action to perform when the button is tapped.
     public init(
         systemImage: String,
         accessibilityLabel: String,
+        menu: UIMenu? = nil,
         action: @escaping () -> Void
     ) {
         self.systemImage = systemImage
         self.accessibilityLabel = accessibilityLabel
+        self.menu = menu
         self.action = action
     }
 }
