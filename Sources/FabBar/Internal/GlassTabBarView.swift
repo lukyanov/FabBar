@@ -8,7 +8,7 @@ final class GlassTabBarView: UIView {
     let segmentedGlassView: UIVisualEffectView
     let segmentedControl: TabBarSegmentedControl
     let fabGlassView: UIVisualEffectView
-    let fabButton: UIButton
+    let fabButton: FabButton
 
     private let spacing: CGFloat = Constants.fabSpacing
     private let contentPadding: CGFloat = Constants.contentPadding
@@ -46,7 +46,7 @@ final class GlassTabBarView: UIView {
         fabGlassEffect.tintColor = .tintColor
         fabGlassView = UIVisualEffectView(effect: fabGlassEffect)
 
-        let button = UIButton(type: .system)
+        let button = FabButton(type: .system)
         let config = UIImage.SymbolConfiguration(pointSize: Constants.fabIconPointSize, weight: .medium)
         let buttonImage = UIImage(systemName: action.systemImage, withConfiguration: config)
         button.setImage(buttonImage, for: .normal)
