@@ -82,6 +82,35 @@ final class GlassTabBarView: UIView {
             // The tap keeps its meaning; press-and-hold is what opens the menu.
             fabButton.showsMenuAsPrimaryAction = false
         }
+        // The menu's own entries, as VoiceOver actions.
+        //
+        // A hold is a gesture VoiceOver does not have: its double-tap is the button's TAP, which
+        // here runs `action`. Without this the menu is reachable by touch and by nothing else, so a
+        // secondary action with no other entry point in the host app is simply unavailable. Apple's
+        // VoiceOver guidance asks for this by name — a control that overloads a long press should
+        // offer the same behaviours through the actions rotor.
+        //
+        // Rebuilt on every update rather than set once: the host hands down fresh closures, and an
+        // action holding a stale one would run the wrong thing.
+        fabButton.accessibilityCustomActions = action.menu.map(Self.customActions(for:))
+    }
+
+    /// A menu's `UIAction` leaves, as accessibility actions. Nested submenus are flattened out —
+    /// a rotor is a flat list, and a group heading is not something it can present.
+    private static func customActions(for menu: UIMenu) -> [UIAccessibilityCustomAction] {
+        menu.children.flatMap { child -> [UIAccessibilityCustomAction] in
+            switch child {
+            case let item as UIAction:
+                return [UIAccessibilityCustomAction(name: item.title) { _ in
+                    item.performWithSender(nil, target: nil)
+                    return true
+                }]
+            case let submenu as UIMenu:
+                return customActions(for: submenu)
+            default:
+                return []
+            }
+        }
     }
 
     private func setupViews() {
