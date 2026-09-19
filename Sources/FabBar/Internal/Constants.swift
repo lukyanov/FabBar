@@ -15,6 +15,11 @@ enum Constants {
     /// Spacing between the segmented control and FAB.
     static let fabSpacing: CGFloat = 8
 
+    /// Widest the bar is drawn, centred beyond that.
+    /// A little over the largest iPhone's bar, so the tabs and the FAB stay within a thumb's
+    /// reach on a screen wider than any phone — a foldable's inner display, say.
+    static let maxBarWidth: CGFloat = 420
+
     // MARK: - Layout Padding
 
     /// Horizontal padding for FabBar positioning.

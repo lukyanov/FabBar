@@ -5,6 +5,16 @@ All notable changes to FabBar will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+- **Breaking:** `.fabBar()` no longer hides itself at regular width. Where the bar belongs is the
+  caller's decision, and the size class does not answer it: a foldable's inner display is a wide
+  phone screen that wants the bar, and an iPad in Slide Over is a narrow one that does not. Callers
+  relying on the old behavior pass `isVisible: horizontalSizeClass == .compact`.
+- The bar is capped at 420pt wide and centred beyond that, so the tabs and the FAB stay within a
+  thumb's reach on a screen wider than any phone
+
 ## [1.1.0] - 2026-02-24
 
 ### Changed

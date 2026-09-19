@@ -5,9 +5,13 @@ import SwiftUI
 /// This modifier handles all the layout details:
 /// - Wraps in `.safeAreaBar(edge: .bottom)`
 /// - Applies appropriate padding
+/// - Caps the bar's width so it stays a thumb-sized control on a wide screen
 /// - Ignores bottom safe area for manual positioning
-/// - Hides automatically on regular horizontal size class (iPad)
 /// - Injects calculated safe area padding into the environment
+///
+/// Whether the bar belongs on a given screen is the caller's decision, through `isVisible`. The
+/// modifier draws no conclusion from the size class: a wide screen can still be a phone screen
+/// that wants this bar, and a narrow one can be an iPad in Slide Over that does not.
 @available(iOS 26.0, *)
 struct FabBarModifier<Value: Hashable>: ViewModifier {
     @Binding var selection: Value
@@ -15,14 +19,7 @@ struct FabBarModifier<Value: Hashable>: ViewModifier {
     let action: FabBarAction
     let isVisible: Bool
 
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var bottomSafeAreaInset: CGFloat = 0
-
-    /// Whether the FabBar should be displayed.
-    /// Only shows on compact horizontal size class (iPhone) when visible.
-    private var showsFabBar: Bool {
-        horizontalSizeClass == .compact && isVisible
-    }
 
     /// Total content margin needed to clear the FabBar.
     private var bottomContentMargin: CGFloat {
@@ -34,19 +31,20 @@ struct FabBarModifier<Value: Hashable>: ViewModifier {
     /// because `safeAreaPadding` adds to the existing safe area.
     /// Returns 0 when the FabBar is not showing.
     private var calculatedPadding: CGFloat {
-        showsFabBar ? bottomContentMargin - bottomSafeAreaInset : 0
+        isVisible ? bottomContentMargin - bottomSafeAreaInset : 0
     }
 
     func body(content: Content) -> some View {
         content
             .safeAreaBar(edge: .bottom) {
-                if showsFabBar {
+                if isVisible {
                     FabBar(selection: $selection, tabs: tabs, action: action)
+                        .frame(maxWidth: Constants.maxBarWidth)
                         .padding(.horizontal, Constants.horizontalPadding)
                         .padding(.bottom, Constants.bottomPadding)
                 }
             }
-            .ignoresSafeArea(.all, edges: showsFabBar ? [.bottom] : [])
+            .ignoresSafeArea(.all, edges: isVisible ? [.bottom] : [])
             .onGeometryChange(for: CGFloat.self) { proxy in
                 proxy.safeAreaInsets.bottom
             } action: { newValue in
@@ -60,8 +58,9 @@ struct FabBarModifier<Value: Hashable>: ViewModifier {
 public extension View {
     /// Adds a FabBar to the bottom of the view.
     ///
-    /// This is the recommended way to use FabBar. It handles positioning,
-    /// safe area management, and automatically hides on iPad.
+    /// This is the recommended way to use FabBar. It handles positioning and safe area management.
+    /// Pass `isVisible` to say where the bar belongs — for example `horizontalSizeClass == .compact`
+    /// to keep it off the iPad, where the native tab bar serves instead.
     ///
     /// ```swift
     /// TabView(selection: $selectedTab) {
