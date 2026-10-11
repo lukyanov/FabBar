@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `FabBarAction(foregroundColor:)` — the FAB icon's colour, white by default. An app whose accent is
+  light in dark mode passes a dynamic colour so the icon keeps its contrast against the tinted glass
+
 ### Changed
 - **Breaking:** `.fabBar()` no longer hides itself at regular width. Where the bar belongs is the
   caller's decision, and the size class does not answer it: a foldable's inner display is a wide

@@ -50,7 +50,6 @@ final class GlassTabBarView: UIView {
         let config = UIImage.SymbolConfiguration(pointSize: Constants.fabIconPointSize, weight: .medium)
         let buttonImage = UIImage(systemName: action.systemImage, withConfiguration: config)
         button.setImage(buttonImage, for: .normal)
-        button.tintColor = .white
         button.accessibilityLabel = action.accessibilityLabel
         button.accessibilityTraits = .button
         fabButton = button
@@ -71,6 +70,7 @@ final class GlassTabBarView: UIView {
     /// asks for the newest children each time it opens.
     func update(action: FabBarAction) {
         self.action = action
+        fabButton.tintColor = action.foregroundColor
         if action.menu == nil {
             fabButton.menu = nil
         } else if fabButton.menu == nil {
