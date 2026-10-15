@@ -79,9 +79,9 @@ final class GlassTabBarView: UIView {
                     completion(self?.action.menu?.children ?? [])
                 }
             ])
-            // The tap keeps its meaning; press-and-hold is what opens the menu.
-            fabButton.showsMenuAsPrimaryAction = false
         }
+        // Press-and-hold opens the menu, and the tap keeps its meaning — unless the menu is the tap.
+        fabButton.showsMenuAsPrimaryAction = action.menu != nil && action.opensMenuOnTap
         // The menu's own entries, as VoiceOver actions.
         //
         // A hold is a gesture VoiceOver does not have: its double-tap is the button's TAP, which

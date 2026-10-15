@@ -5,7 +5,8 @@ import UIKit
 /// It exists as a subclass for one reason: to answer a press-and-hold with a knock. UIKit plays
 /// the hold feedback only for a context menu that shows a *preview*; a control that presents its
 /// `menu` on a hold presents silently, so the finger gets no reply until the menu has drawn.
-/// `UIControl` publishes the presentation callback for exactly this kind of addition.
+/// `UIControl` publishes the presentation callback for exactly this kind of addition. A menu that
+/// opens on a tap answers the tap itself, as any button's does, and gets no knock.
 @available(iOS 26.0, *)
 final class FabButton: UIButton {
     /// Kept alive between presses so the Taptic engine is already warm when the hold completes —
@@ -23,6 +24,6 @@ final class FabButton: UIButton {
         animator: UIContextMenuInteractionAnimating?
     ) {
         super.contextMenuInteraction(interaction, willDisplayMenuFor: configuration, animator: animator)
-        holdFeedback.impactOccurred()
+        if !showsMenuAsPrimaryAction { holdFeedback.impactOccurred() }
     }
 }

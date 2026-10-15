@@ -96,6 +96,8 @@ struct ContentView: View {
 }
 ```
 
+Give the action a `menu` and a press-and-hold presents it, anchored to the button, while a tap still runs the action. For a button whose every choice is in its menu, build it with `FabBarAction(systemImage:accessibilityLabel:opening:)` instead, and a tap opens the menu.
+
 The `.fabBar()` modifier handles positioning and safe area management, and caps the bar's width so it stays a thumb-sized control on a screen wider than a phone. Pass `isVisible` to say where the bar belongs — `horizontalSizeClass == .compact` keeps it off the iPad, where the native tab bar serves instead. Use `.fabBarSafeAreaPadding()` on scrollable content within each tab to ensure content isn't hidden behind the bar.
 
 For more control over positioning, you can use the `FabBar` view directly.
