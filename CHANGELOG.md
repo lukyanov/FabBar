@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `.fabBar(isCovered:)` — the bar stands down for a screen pushed over the tab, while the tab's
+  content keeps the room `.fabBarSafeAreaPadding()` reserves. With `isVisible` for that, a list
+  scrolled to its end lost the room, was clamped back, and came out from under the pushed screen
+  short of where it was left
 - `FabBarAction(foregroundColor:)` — the FAB icon's colour, white by default. An app whose accent is
   light in dark mode passes a dynamic colour so the icon keeps its contrast against the tinted glass
 

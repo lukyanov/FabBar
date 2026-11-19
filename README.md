@@ -144,6 +144,17 @@ Hide the FabBar based on app state (e.g., during selection mode):
 )
 ```
 
+A screen pushed over the tab is the other reason to hide the bar. Say so with `isCovered` rather than `isVisible`: the bar stands down the same way, but the tab's content keeps the room `.fabBarSafeAreaPadding()` reserves for it, so a list scrolled to its end is still there when the pushed screen goes.
+
+```swift
+.fabBar(
+    selection: $selectedTab,
+    tabs: tabs,
+    action: action,
+    isCovered: !path.isEmpty
+)
+```
+
 ### Manual Positioning
 
 For more control, use the `FabBar` view directly instead of the modifier. Apply 21pt padding on all sides:
